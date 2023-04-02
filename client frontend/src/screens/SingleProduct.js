@@ -78,10 +78,20 @@ const SingleProduct = ({ history, match }) => {
                   <p>{product.description}</p>
 
                   <div className="product-count col-lg-7 ">
+                  <div className="flex-box d-flex justify-content-between align-items-center">
+                      <h6>Shop: </h6>
+                      <span>{product.shop_name}</span>
+                    </div>
                     <div className="flex-box d-flex justify-content-between align-items-center">
                       <h6>Price</h6>
                       <span>${product.price}</span>
                     </div>
+                    <div className="flex-box d-flex justify-content-between align-items-center">
+                      <h6>Brand/Color: </h6>
+                      <span>{product.Brand}/{product.Color}</span>
+                    </div>
+                    
+
                     <div className="flex-box d-flex justify-content-between align-items-center">
                       <h6>Status</h6>
                       {product.countInStock > 0 ? (

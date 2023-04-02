@@ -62,7 +62,7 @@ const ShopSection = (props) => {
                     ))}
                   </>
                 )}
-
+                
                 {/* Pagination */}
                 <Pagination
                   pages={pages}

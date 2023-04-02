@@ -50,6 +50,21 @@ const productSchema = mongoose.Schema(
       required: true,
       default: 0,
     },
+    Brand: {
+      type: String,
+    },
+    Category_by_gender: {
+      type: String,
+    },
+    shop_name: {
+      type: String,
+    },
+    Original_Price: {
+      type: Number,
+    },
+    Color: {
+      type: String,
+    },
   },
   {
     timestamps: true,
