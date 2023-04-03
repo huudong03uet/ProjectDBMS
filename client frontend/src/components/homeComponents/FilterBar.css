@@ -1,0 +1,41 @@
+/* <div>
+      <span className="filter-bar">Filter</span>
+      <div className="filter-by-option">
+        <div className="filter-by-option__item">
+          <span className="filter-by-option__item__title">Name</span>
+          <input
+            type="text"
+            className="form-control"
+            id="name"
+            value={filters.name}
+            onChange={handleInput("name")}
+          />
+        </div>
+        <div className="filter-by-option__item">
+            <span className="filter-by-option__item__title">Price</span>
+            <input
+                type="text"
+                className="form-control"
+                id="price"
+                value={filters.price}
+                onChange={handleInput("price")}
+            />
+        </div>
+      </div>
+    </div> */
+
+/* I want filter-bar is the same row with other */
+
+.filter-bar {
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.filter-by-option {
+  display: inline-block;
+}
+
+.filter-by-option__item {
+  display: inline-block;
+  margin-right: 10px;
+}

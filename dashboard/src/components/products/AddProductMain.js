@@ -20,6 +20,11 @@ const AddProductMain = () => {
   const [image, setImage] = useState("");
   const [countInStock, setCountInStock] = useState(0);
   const [description, setDescription] = useState("");
+  const [Brand, setBrand] = useState("");
+  const [Category_by_gender, setCategoryByGender] = useState("");
+  const [shop_name, setShopName] = useState("");
+  const [original_price, setOriginalPrice] = useState(0);
+  const [Color, setColor] = useState("");
 
   const dispatch = useDispatch();
 
@@ -35,12 +40,17 @@ const AddProductMain = () => {
       setCountInStock(0);
       setImage("");
       setPrice(0);
+      setBrand("");
+      setCategoryByGender("");
+      setShopName("");
+      setOriginalPrice(0);
+      setColor("");
     }
   }, [product, dispatch]);
 
   const submitHandler = (e) => {
     e.preventDefault();
-    dispatch(createProduct(name, price, description, image, countInStock));
+    dispatch(createProduct(name, price, description, image, countInStock, Brand, Category_by_gender, shop_name, original_price, Color));
   };
 
   return (
@@ -67,6 +77,20 @@ const AddProductMain = () => {
                   {error && <Message variant="alert-danger">{error}</Message>}
                   {loading && <Loading />}
                   <div className="mb-4">
+                    <label htmlFor="product_shop_name" className="form-label">
+                        Shop name
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Type here"
+                        className="form-control"
+                        id="product_shop_name"
+                        required
+                        value={shop_name}
+                        onChange={(e) => setShopName(e.target.value)}
+                      />
+                  </div>
+                  <div className="mb-4">
                     <label htmlFor="product_title" className="form-label">
                       Product title
                     </label>
@@ -92,6 +116,75 @@ const AddProductMain = () => {
                       required
                       value={price}
                       onChange={(e) => setPrice(e.target.value)}
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <label htmlFor="product_original_price" className="form-label">
+                      Original price
+                    </label>
+                    <input
+                      type="number"
+                      placeholder="Type here"
+                      className="form-control"
+                      id="product_original_price"
+                      required
+                      value={original_price}
+                      onChange={(e) => setOriginalPrice(e.target.value)}
+                    />
+                  </div>
+                  <div className="mb-4">
+                    {/* for category_by_gender (man/woman) */}
+                    <label htmlFor="product_category_by_gender" className="form-label">
+                      Category by gender 
+                    </label>
+                    {/* <input // select man/woman
+                      type="text"
+                      placeholder="Type here"
+                      className="form-control"
+                      id="product_category_by_gender"
+                      required
+                      value={Category_by_gender}
+                      onChange={(e) => setPrice(e.target.value)}
+                    /> */}
+                    <select 
+                      name="gender"
+                      className="form-control"
+                      id="product_category_by_gender"
+                      required
+                      value={Category_by_gender}
+                      onChange={(e) => setCategoryByGender(e.target.value)}
+                    >
+                      <option value="man">Man</option>
+                      <option value="woman">Woman</option>
+                      <option value="man/woman">Man/Woman</option>
+                    </select>
+                  </div>
+                  <div className="mb-4">
+                    <label htmlFor="product_color" className="form-label">
+                      Color
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Type here"
+                      className="form-control"
+                      id="product_color"
+                      required
+                      value={Color}
+                      onChange={(e) => setColor(e.target.value)}
+                    />
+                  </div>
+                  <div className="mb-4">
+                  <label htmlFor="product_brand" className="form-label">
+                      Brand
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Type here"
+                      className="form-control"
+                      id="product_brand"
+                      required
+                      value={Brand}
+                      onChange={(e) => setBrand(e.target.value)}
                     />
                   </div>
                   <div className="mb-4">

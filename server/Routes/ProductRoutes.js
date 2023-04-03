@@ -26,16 +26,35 @@ productRoute.get(
       .sort({ _id: -1 });
     res.json({ products, page, pages: Math.ceil(count / pageSize) });
   })
+  
 );
 
 // ADMIN GET ALL PRODUCT WITHOUT SEARCH AND PEGINATION
 productRoute.get(
   "/all",
-  protect,
-  admin,
+  // protect,
+  // admin,
+  // asyncHandler(async (req, res) => {
+  //   const products = await Product.find({}).sort({ _id: -1 });
+  //   res.json(products);
+  // })
   asyncHandler(async (req, res) => {
-    const products = await Product.find({}).sort({ _id: -1 });
-    res.json(products);
+    const pageSize = 12;
+    const page = Number(req.query.pageNumber) || 1;
+    const keyword = req.query.keyword
+      ? {
+          name: {
+            $regex: req.query.keyword,
+            $options: "i",
+          },
+        }
+      : {};
+    const count = await Product.countDocuments({ ...keyword });
+    const products = await Product.find({ ...keyword })
+      .limit(pageSize)
+      .skip(pageSize * (page - 1))
+      .sort({ _id: -1 });
+    res.json( products);
   })
 );
 
@@ -114,7 +133,7 @@ productRoute.post(
   protect,
   admin,
   asyncHandler(async (req, res) => {
-    const { name, price, description, image, countInStock } = req.body;
+    const { name, price, description, image, countInStock, Brand, Category_by_gender, shop_name, Original_Price, Color } = req.body;
     const productExist = await Product.findOne({ name });
     if (productExist) {
       res.status(400);
@@ -126,6 +145,11 @@ productRoute.post(
         description,
         image,
         countInStock,
+        Brand,
+        Category_by_gender,
+        shop_name,
+        Original_Price,
+        Color,
         user: req.user._id,
       });
       if (product) {
