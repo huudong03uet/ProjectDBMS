@@ -1,40 +1,33 @@
 import { useState } from "react";
 // import css
 import "./FilterBar.css";
+import { Link, useHistory } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
 // name, rating, price, brand, gender, shop, color, sort
-const FilterBar = ({
-  onNameFilter,
-  onPriceFilter,
-  onBrandFilter,
-  onShopFilter,
-  onColorFilter,
-  onGenderFilter,
-  onRatingFilter,
-  onSortFilter,
-}) => {
-  const [filters, setFilters] = useState({
-    name: "",
-    price: "",
-    brand: "",
-    shop: "",
-    color: "",
-    gender: "",
-    rating: "",
-    sort: "",
-  });
+const FilterBar = () => {
+  // const filter = [name, rating, price, brand, gender, shop, color, sort];
+  const filter = ["name", "price_max","price_min", "brand", "shop", "color", "gender", "order by"];
+  const [keyword, setKeyword] = useState();
+  const dispatch = useDispatch();
+  let history = useHistory();
+  
 
-  const handleInput = (field) => (event) => {
-    const { value } = event.target;
+  const cart = useSelector((state) => state.cart);
+  const { cartItems } = cart;
 
-    setFilters({
-      ...filters,
-      [field]: value,
-    });
+  const handleInput = (name) => (event) => {
+    setKeyword({ ...keyword, [name]: event.target.value });
+    console.log(keyword);
   };
+
   const handleSubmit = (event) => {
-    event.preventDefault();
-    // gọi các hàm xử lý filter ở đây
+    event.preventDefault();  
+    if (keyword) {
+      history.push(`/search/full/name/${keyword.name}/price_min/${keyword.price_min}/price_max/${keyword.price_max}/brand/${keyword.brand}/shop/${keyword.shop}/color/${keyword.color}/gender/${keyword.gender}/order_by/${keyword.order_by}`);
+    } else {
+      history.push("/");
+    }
   };
 
   return (
@@ -49,19 +42,28 @@ const FilterBar = ({
               placeholder="Name"
               className="form-control"
               id="name"
-              value={filters.name}
               onChange={handleInput("name")}
             />
           </div>
           <div className="filter-by-option__item">
             <span className="filter-by-option__item__title"></span>
             <input
-              type="text"
-                placeholder="Price"
+              type="number"
+                placeholder="Price min"
               className="form-control"
-              id="price"
-              value={filters.price}
-              onChange={handleInput("price")}
+              id="price_min"
+              // value={filters.price}
+              onChange={handleInput("price_min")}
+            />
+          </div>
+          <div className="filter-by-option__item">
+            <span className="filter-by-option__item__title"></span>
+            <input
+              type="number"
+                placeholder="Price max"
+              className="form-control"
+              id="price_max"
+              onChange={handleInput("price_max")}
             />
           </div>
           <div className="filter-by-option__item">
@@ -72,7 +74,7 @@ const FilterBar = ({
 
               className="form-control"
               id="brand"
-              value={filters.brand}
+              // value={filters.brand}
               onChange={handleInput("brand")}
             />
           </div>
@@ -84,7 +86,7 @@ const FilterBar = ({
               className="form-control"
               id="shop"
 
-              value={filters.shop}
+              // value={filters.shop}
               onChange={handleInput("shop")}
             />
           </div>
@@ -95,10 +97,46 @@ const FilterBar = ({
               placeholder="Color"
               className="form-control"
               id="color"
-              value={filters.color}
+              // value={filters.color}
               onChange={handleInput("color")}
             />
           </div>
+          <div className="filter-by-option__item">
+            <span className="filter-by-option__item__title"></span>
+            <select
+              type="text"
+              className="form-control"
+              placeholder="Gender"
+              id="gender"
+
+              // value={filters.color}
+              onChange={handleInput("gender")}
+            >
+              <option>Gender</option>
+              <option value="Men">Man</option>
+              <option value="Women">Woman</option>
+            </select>
+          </div>
+          <div className="filter-by-option__item">
+            <span className="filter-by-option__item__title"></span>
+            <select
+              type="text"
+              className="form-control"
+              placeholder="Order by"
+              id="order_by"
+
+              // value={filters.color}
+              onChange={handleInput("order_by")}
+            >
+              <option>Order by</option>
+              <option value="Name">Name</option>
+              <option value="Price_high">Price high</option>
+              <option value="Price_low">Price low</option>
+              <option value="Rating_high">Rating high</option> 
+              <option value="Rating_low">Rating low</option>            
+            </select>
+          </div>
+
           <button type="submit" className="btn btn-primary">
             Submit
           </button>

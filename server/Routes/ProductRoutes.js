@@ -26,8 +26,88 @@ productRoute.get(
       .sort({ _id: -1 });
     res.json({ products, page, pages: Math.ceil(count / pageSize) });
   })
-  
 );
+// get product with filter (keyword is object)
+// name, price, brand, shop, color
+productRoute.get(
+  "/full",
+  asyncHandler(async (req, res) => {
+    const pageSize = 12;
+    const page = Number(req.query.pageNumber) || 1;
+    const name = req.query.name 
+    // check undefined price
+    console.log(req.query)
+    const price_max = Number(req.query.price_max) || 1000000000
+    const price_min = Number(req.query.price_min) || 0
+    const brand =  req.query.brand
+    const shop =  req.query.shop
+    const color =  req.query.color
+    const gender = req.query.gender
+    const order_by = req.query.order_by
+    // find product with name, price, brand, shop, color
+    const keyword = {
+      name: {
+        $regex: name,
+        $options: "i",
+      },
+      price : {
+        $gte: price_min,
+        $lte: price_max,
+      },
+      Brand: {
+        $regex: brand,
+        $options: "i",
+      },
+      shop_name: {
+        $regex: shop,
+        $options: "i",
+      },
+      Color: {
+        $regex: color,
+        $options: "i",
+      },
+      Category_by_gender: {
+        $regex: gender,
+        $options: "i",
+      },
+   };
+   console.log(keyword)
+    // delete keyword which undefined
+    for (const key in keyword) {
+      if (keyword[key].$regex === "undefined" || keyword[key].$regex === "") {
+        delete keyword[key];
+      }
+    }
+    // sort order by order_by
+    let sort = {}
+    if (order_by === "Price_high") {
+      sort = { price: -1 }
+    } else if (order_by === "Price_low") {
+      sort = { price: 1 }
+    } else if (order_by === "Rating_high") {
+      sort = { rating: -1 }
+    } else if (order_by === "Rating_low") {
+      sort = { rating: 1 }
+    } else if (order_by === "Name"){
+      sort = { name: 1 }
+    } else {
+      sort = { _id: -1 }
+    }
+    const sort_ = sort;
+    console.log(sort_)
+    const count = await Product.countDocuments({ ...keyword });
+    const products = await Product.find({ ...keyword })
+      .limit(pageSize)
+      .skip(pageSize * (page - 1))
+      .sort(sort_);
+    res.json({ products, page, pages: Math.ceil(count / pageSize) });
+  })
+
+
+);
+
+
+
 
 // ADMIN GET ALL PRODUCT WITHOUT SEARCH AND PEGINATION
 productRoute.get(

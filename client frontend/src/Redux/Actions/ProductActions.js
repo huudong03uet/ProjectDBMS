@@ -33,6 +33,29 @@ export const listProduct =
     }
   };
 
+
+  // PRODUCT LIST FULL when full search
+export const listProductFull =
+  (keyword = " ", pageNumber = " ") =>
+  async (dispatch) => {
+    try {
+      console.log(keyword)
+      dispatch({ type: PRODUCT_LIST_REQUEST });
+      const { data } = await axios.get(
+        `${URL}/api/products/full?name=${keyword.name}&price_min=${keyword.price_min}&price_max=${keyword.price_max}&brand=${keyword.brand}&shop=${keyword.shop}&color=${keyword.color}&gender=${keyword.gender}&order_by=${keyword.order_by}&pageNumber=${pageNumber}`
+      );
+      dispatch({ type: PRODUCT_LIST_SUCCESS, payload: data });
+    } catch (error) {
+      dispatch({
+        type: PRODUCT_LIST_FAIL,
+        payload:
+          error.response && error.response.data.message
+            ? error.response.data.message
+            : error.message,
+      });
+    }
+  };
+
 // SINGLE PRODUCT
 export const listProductDetails = (id) => async (dispatch) => {
   try {
