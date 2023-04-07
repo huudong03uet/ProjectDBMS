@@ -1,6 +1,7 @@
 import express from "express";
 import asyncHandler from "express-async-handler";
 import Product from "./../Models/ProductModel.js";
+import Shop from "./../Models/ShopModel.js";
 import { admin, protect } from "./../Middleware/AuthMiddleware.js";
 
 const productRoute = express.Router();
@@ -152,6 +153,21 @@ productRoute.get(
   })
 );
 
+productRoute.get(
+  "/shops/:name",
+  asyncHandler(async (req, res) => {
+    //const shops = await Shop.findById(req.params.id);
+    // get by name
+    const shops = await Shop.findOne({ shop_name: req.params.name });
+    if (shops) {
+      res.json(shops);
+    } else {
+      res.status(404);
+      throw new Error("Shop not Found");
+    }
+  })
+);
+
 // PRODUCT REVIEW
 productRoute.post(
   "/:id/review",
@@ -159,7 +175,6 @@ productRoute.post(
   asyncHandler(async (req, res) => {
     const { rating, comment } = req.body;
     const product = await Product.findById(req.params.id);
-
     if (product) {
       const alreadyReviewed = product.reviews.find(
         (r) => r.user.toString() === req.user._id.toString()
@@ -186,6 +201,46 @@ productRoute.post(
     } else {
       res.status(404);
       throw new Error("Product not Found");
+    }
+  })
+);
+
+// shop REVIEW
+productRoute.post(
+  "/shops/:name/review",
+  protect,
+  asyncHandler(async (req, res) => {
+    const { rating, comment } = req.body;
+    const shop = await Shop.findOne({ shop_name: req.params.name });
+    if (shop) {
+      const alreadyReviewed = shop.reviews.find(
+        (r) => r.user.toString() === req.user._id.toString()
+      );
+      if (alreadyReviewed) {
+        // res.status(400);
+        // throw new Error("Shop already Reviewed");
+      }
+      
+      const review = {
+        name: req.user.name,
+        rating: Number(rating),
+        comment,
+        user: req.user._id,
+      };
+      
+      shop.reviews.push(review);
+      
+      shop.numReviews = shop.reviews.length;
+      
+      shop.rating =
+        shop.reviews.reduce((acc, item) => item.rating + acc, 0) /
+        shop.reviews.length;
+        
+      await shop.save();
+      res.status(201).json({ message: "Reviewed Added" });
+    } else {
+      res.status(404);
+      throw new Error("Shop not Found");
     }
   })
 );

@@ -9,6 +9,12 @@ import {
   PRODUCT_LIST_FAIL,
   PRODUCT_LIST_REQUEST,
   PRODUCT_LIST_SUCCESS,
+  SHOP_CREATE_REVIEW_FAIL,
+  SHOP_CREATE_REVIEW_REQUEST,
+  SHOP_CREATE_REVIEW_SUCCESS,
+  SHOP_DETAILS_FAIL,
+  SHOP_DETAILS_REQUEST,
+  SHOP_DETAILS_SUCCESS,
 } from "../Constants/ProductConstants";
 import { logout } from "./userActions";
 import {URL} from "../Url";
@@ -73,6 +79,24 @@ export const listProductDetails = (id) => async (dispatch) => {
   }
 };
 
+// single shop
+export const listShopDetails = (id) => async (dispatch) => {
+  try {
+    dispatch({ type: SHOP_DETAILS_REQUEST });
+    const { data } = await axios.get(`${URL}/api/products/shops/${id}`);
+    dispatch({ type: SHOP_DETAILS_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({
+      type: SHOP_DETAILS_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+
 // PRODUCT REVIEW CREATE
 export const createProductReview =
   (productId, review) => async (dispatch, getState) => {
@@ -106,3 +130,37 @@ export const createProductReview =
       });
     }
   };
+
+// Shop create review
+export const createShopReview =
+  (shopId, review) => async (dispatch, getState) => {
+    try {
+      dispatch({ type: SHOP_CREATE_REVIEW_REQUEST });
+
+      const {
+        userLogin: { userInfo },
+      } = getState();
+
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
+      await axios.post(`${URL}/api/products/shops/${shopId}/review`, review, config);
+      dispatch({ type: SHOP_CREATE_REVIEW_SUCCESS });
+    } catch (error) {
+      const message =
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message;
+      if (message === "Not authorized, token failed") {
+        dispatch(logout());
+      }
+      dispatch({
+        type: SHOP_CREATE_REVIEW_FAIL,
+        payload: message,
+      });
+    }
+  }
+  

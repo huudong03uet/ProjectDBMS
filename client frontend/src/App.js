@@ -16,6 +16,7 @@ import OrderScreen from "./screens/OrderScreen";
 import NotFound from "./screens/NotFound";
 import PrivateRouter from "./PrivateRouter";
 import HomeScreenFilter from "./screens/HomeScreenFilter";
+import SingleShop from "./screens/SingleShop";
 
 const App = () => {
   return (
@@ -38,7 +39,8 @@ const App = () => {
           path="/search/full/name/:name/price_min/:price_min/price_max/:price_max/brand/:brand/shop/:shop/color/:color/gender/:gender/order_by/:order_by/page/:pagenumber" 
           component={HomeScreenFilter} 
           exact />
-        <Route path="/products/:id" component={SingleProduct} />
+        <Route path="/products/:id" component={SingleProduct} exact/>
+        <Route path="/products/shops/:id" component={SingleShop} exact/>
         <Route path="/login" component={Login} />
         <Route path="/register" component={Register} />
         <PrivateRouter path="/profile" component={ProfileScreen} />

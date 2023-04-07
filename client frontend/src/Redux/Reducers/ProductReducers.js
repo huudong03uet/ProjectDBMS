@@ -9,6 +9,13 @@ import {
   PRODUCT_LIST_FAIL,
   PRODUCT_LIST_REQUEST,
   PRODUCT_LIST_SUCCESS,
+  SHOP_CREATE_REVIEW_FAIL,
+  SHOP_CREATE_REVIEW_SUCCESS,
+  SHOP_CREATE_REVIEW_RESET,
+  SHOP_CREATE_REVIEW_REQUEST,
+  SHOP_DETAILS_FAIL,
+  SHOP_DETAILS_REQUEST,
+  SHOP_DETAILS_SUCCESS,
 } from "../Constants/ProductConstants";
 
 // PRODUCT LIST
@@ -47,6 +54,24 @@ export const productDetailsReducer = (
   }
 };
 
+// SINGLE SHOP
+export const shopDetailsReducer = (
+  state = { shop: { reviews: [] } },
+  action
+) => {
+  switch (action.type) {
+    case SHOP_DETAILS_REQUEST:
+      return { ...state, loading: true };
+    case SHOP_DETAILS_SUCCESS:
+      return { loading: false, shop: action.payload };
+    case SHOP_DETAILS_FAIL:
+      return { loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+
 // PRODUCT REVIEW CREATE
 export const productCreateReviewReducer = (state = {}, action) => {
   switch (action.type) {
@@ -62,3 +87,19 @@ export const productCreateReviewReducer = (state = {}, action) => {
       return state;
   }
 };
+
+// SHOP REVIEW CREATE
+export const shopCreateReviewReducer = (state = {}, action) => {
+  switch (action.type) {
+    case SHOP_CREATE_REVIEW_REQUEST:
+      return { loading: true };
+    case SHOP_CREATE_REVIEW_SUCCESS:
+      return { loading: false, success: true };
+    case SHOP_CREATE_REVIEW_FAIL:
+      return { loading: false, error: action.payload };
+    case SHOP_CREATE_REVIEW_RESET:
+      return {};
+    default:
+      return state;
+  }
+}
