@@ -18,11 +18,16 @@ const FilterBar = () => {
 
   const handleInput = (name) => (event) => {
     setKeyword({ ...keyword, [name]: event.target.value });
-    console.log(keyword);
+
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();  
+    for (let i = 0; i < filter.length; i++) {
+      if (keyword[filter[i]] === "") {
+        keyword[filter[i]] = undefined;
+         }
+    }
     if (keyword) {
       history.push(`/search/full/name/${keyword.name}/price_min/${keyword.price_min}/price_max/${keyword.price_max}/brand/${keyword.brand}/shop/${keyword.shop}/color/${keyword.color}/gender/${keyword.gender}/order_by/${keyword.order_by}`);
     } else {
@@ -33,7 +38,9 @@ const FilterBar = () => {
   return (
     <form onSubmit={handleSubmit}>
       <div>
-        <span className="filter-bar">Filter</span>
+        {/* <span className="filter-bar"
+        style={{fontSize: "40px", fontWeight: "bold", color: "black"}}
+        ></span> */}
         <div className="filter-by-option">
           <div className="filter-by-option__item">
             <span className="filter-by-option__item__title"></span>
@@ -138,7 +145,7 @@ const FilterBar = () => {
           </div>
 
           <button type="submit" className="btn btn-primary">
-            Submit
+            Search
           </button>
         </div>
       </div>

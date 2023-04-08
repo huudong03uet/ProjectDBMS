@@ -32,7 +32,7 @@ const SingleShop = ({ history, match }) => {
   } = shopReviewCreate;
 
   useEffect(() => {
-    console.log("hello", successCreateReview);
+   
     if (successCreateReview) {
       alert("Review Submitted");
       setRating(0);
@@ -124,7 +124,6 @@ const SingleShop = ({ history, match }) => {
                 </div>
               </div>
             </div>
-
             {/* RATING */}
             <div className="row my-5">
               <div className="col-md-6">

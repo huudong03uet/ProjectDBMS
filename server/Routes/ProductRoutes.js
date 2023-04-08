@@ -35,23 +35,22 @@ productRoute.get(
   asyncHandler(async (req, res) => {
     const pageSize = 12;
     const page = Number(req.query.pageNumber) || 1;
-    const name = req.query.name 
-    // check undefined price
-    console.log(req.query)
-    const price_max = Number(req.query.price_max) || 1000000000
-    const price_min = Number(req.query.price_min) || 0
-    const brand =  req.query.brand
-    const shop =  req.query.shop
-    const color =  req.query.color
-    const gender = req.query.gender
-    const order_by = req.query.order_by
+    const name = req.query.name;
+
+    const price_max = Number(req.query.price_max) || 1000000000;
+    const price_min = Number(req.query.price_min) || 0;
+    const brand = req.query.brand;
+    const shop = req.query.shop;
+    const color = req.query.color;
+    const gender = req.query.gender;
+    const order_by = req.query.order_by;
     // find product with name, price, brand, shop, color
     const keyword = {
       name: {
         $regex: name,
         $options: "i",
       },
-      price : {
+      price: {
         $gte: price_min,
         $lte: price_max,
       },
@@ -68,11 +67,11 @@ productRoute.get(
         $options: "i",
       },
       Category_by_gender: {
+        // find exact gender
         $regex: gender,
-        $options: "i",
       },
-   };
-   console.log(keyword)
+    };
+
     // delete keyword which undefined
     for (const key in keyword) {
       if (keyword[key].$regex === "undefined" || keyword[key].$regex === "") {
@@ -80,22 +79,22 @@ productRoute.get(
       }
     }
     // sort order by order_by
-    let sort = {}
+    let sort = {};
     if (order_by === "Price_high") {
-      sort = { price: -1 }
+      sort = { price: -1 };
     } else if (order_by === "Price_low") {
-      sort = { price: 1 }
+      sort = { price: 1 };
     } else if (order_by === "Rating_high") {
-      sort = { rating: -1 }
+      sort = { rating: -1 };
     } else if (order_by === "Rating_low") {
-      sort = { rating: 1 }
-    } else if (order_by === "Name"){
-      sort = { name: 1 }
+      sort = { rating: 1 };
+    } else if (order_by === "Name") {
+      sort = { name: 1 };
     } else {
-      sort = { _id: -1 }
+      sort = { _id: -1 };
     }
     const sort_ = sort;
-    console.log(sort_)
+
     const count = await Product.countDocuments({ ...keyword });
     const products = await Product.find({ ...keyword })
       .limit(pageSize)
@@ -103,12 +102,7 @@ productRoute.get(
       .sort(sort_);
     res.json({ products, page, pages: Math.ceil(count / pageSize) });
   })
-
-
 );
-
-
-
 
 // ADMIN GET ALL PRODUCT WITHOUT SEARCH AND PEGINATION
 productRoute.get(
@@ -135,7 +129,7 @@ productRoute.get(
       .limit(pageSize)
       .skip(pageSize * (page - 1))
       .sort({ _id: -1 });
-    res.json( products);
+    res.json(products);
   })
 );
 
@@ -220,22 +214,22 @@ productRoute.post(
         // res.status(400);
         // throw new Error("Shop already Reviewed");
       }
-      
+
       const review = {
         name: req.user.name,
         rating: Number(rating),
         comment,
         user: req.user._id,
       };
-      
+
       shop.reviews.push(review);
-      
+
       shop.numReviews = shop.reviews.length;
-      
+
       shop.rating =
         shop.reviews.reduce((acc, item) => item.rating + acc, 0) /
         shop.reviews.length;
-        
+
       await shop.save();
       res.status(201).json({ message: "Reviewed Added" });
     } else {
@@ -268,7 +262,18 @@ productRoute.post(
   protect,
   admin,
   asyncHandler(async (req, res) => {
-    const { name, price, description, image, countInStock, Brand, Category_by_gender, shop_name, Original_Price, Color } = req.body;
+    const {
+      name,
+      price,
+      description,
+      image,
+      countInStock,
+      Brand,
+      Category_by_gender,
+      shop_name,
+      Original_Price,
+      Color,
+    } = req.body;
     const productExist = await Product.findOne({ name });
     if (productExist) {
       res.status(400);
@@ -321,4 +326,58 @@ productRoute.put(
     }
   })
 );
+
+// product: name, rating, price, Brand, Category_by_gender, shop_name, Color
+// recommend product
+productRoute.get(
+  "/recommend/:id",
+  asyncHandler(async (req, res) => {
+    const recommendation = await Product.findById(req.params.id);
+    if (recommendation) {
+      const products = await Product.aggregate([
+        {
+          $match: {
+            // find name full text search
+            $text: { $search: recommendation.name },
+            // remove name same as recommendation
+            name: { $ne: recommendation.name },
+            Category_by_gender: recommendation.Category_by_gender,
+            price: {
+              $lte: recommendation.price * 1.5,
+              $gte: recommendation.price * 0.8,
+            },
+            rating: { $gte: recommendation.rating - 1 },
+            Color: recommendation.Color,
+          },
+        },
+        // get weight of name, price, rating
+        {
+          $addFields: {
+            score_: {
+              $add: [
+                { $multiply: [{ $meta: "textScore" }, 70] },
+                { $multiply: ["$price", -1] },
+                { $multiply: ["$rating", 10] },
+              ],
+            },
+          },
+        },
+        {
+          $sort: {
+            score_: -1,
+          },
+        },
+
+        {
+          $limit: 18,
+        },
+      ]);
+      res.json(products);
+    } else {
+      res.status(404);
+      throw new Error("Product not Found");
+    }
+  })
+);
+
 export default productRoute;

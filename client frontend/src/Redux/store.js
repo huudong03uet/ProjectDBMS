@@ -5,6 +5,7 @@ import {
   productCreateReviewReducer,
   productDetailsReducer,
   productListReducer,
+  productRecommendReducer,
   shopCreateReviewReducer,
   shopDetailsReducer,
 
@@ -25,7 +26,9 @@ import {
 
 const reducer = combineReducers({
   productList: productListReducer,
+  productRecommend: productRecommendReducer,
   productDetails: productDetailsReducer,
+  
   shopDetails: shopDetailsReducer,
   productReviewCreate: productCreateReviewReducer,
   shopReviewCreate: shopCreateReviewReducer,

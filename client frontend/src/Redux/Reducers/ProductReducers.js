@@ -16,6 +16,10 @@ import {
   SHOP_DETAILS_FAIL,
   SHOP_DETAILS_REQUEST,
   SHOP_DETAILS_SUCCESS,
+  PRODUCT_RECOMMEND_FAIL,
+  PRODUCT_RECOMMEND_REQUEST,
+  PRODUCT_RECOMMEND_SUCCESS,
+  PRODUCT_RECOMMEND_RESET,
 } from "../Constants/ProductConstants";
 
 // PRODUCT LIST
@@ -36,6 +40,25 @@ export const productListReducer = (state = { products: [] }, action) => {
       return state;
   }
 };
+
+export const productRecommendReducer = (state = { products: [] }, action) => {
+  switch (action.type) {
+    case PRODUCT_RECOMMEND_REQUEST:
+      return { loading: true, products: [] };
+    case PRODUCT_RECOMMEND_SUCCESS:
+      return {
+        loading: false,
+        products: action.payload,
+      };
+    case PRODUCT_RECOMMEND_FAIL:
+      return { loading: false, error: action.payload };
+    case PRODUCT_RECOMMEND_RESET:
+        return { products: [] };
+    default:
+      return state;
+  }
+};
+
 
 // SINGLE PRODUCT
 export const productDetailsReducer = (

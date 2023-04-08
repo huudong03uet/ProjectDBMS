@@ -11,6 +11,7 @@ import {
 import Loading from "../components/LoadingError/Loading";
 import { PRODUCT_CREATE_REVIEW_RESET } from "../Redux/Constants/ProductConstants";
 import moment from "moment";
+import RecommendProducts from "./RecommendProducts";
 
 const SingleProduct = ({ history, match }) => {
   const [qty, setQty] = useState(1);
@@ -19,7 +20,6 @@ const SingleProduct = ({ history, match }) => {
 
   const productId = match.params.id;
   const dispatch = useDispatch();
-
   const productDetails = useSelector((state) => state.productDetails);
   const { loading, error, product } = productDetails;
   const userLogin = useSelector((state) => state.userLogin);
@@ -59,6 +59,7 @@ const SingleProduct = ({ history, match }) => {
 
   return (
     <>
+
       <Header />
       <div className="container single-product">
         {loading ? (
@@ -147,7 +148,7 @@ const SingleProduct = ({ history, match }) => {
                 </div>
               </div>
             </div>
-
+            
             {/* RATING */}
             <div className="row my-5">
               <div className="col-md-6">
@@ -227,9 +228,20 @@ const SingleProduct = ({ history, match }) => {
                 )}
               </div>
             </div>
+            {/* RECOMMEND PRODUCTS */}
+            {/* text: Other product */}
+            <div>
+              <h6 className="mb-3"
+              style={{color: "black", fontWeight: "bold", fontSize: "40px"}}
+              >OTHER PRODUCTS</h6>
+            </div>
+            
+            
           </>
         )}
+        {/* console.log */}          
       </div>
+      <RecommendProducts keyword={product._id} />
     </>
   );
 };

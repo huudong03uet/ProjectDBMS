@@ -6,6 +6,9 @@ import {
   PRODUCT_DETAILS_FAIL,
   PRODUCT_DETAILS_REQUEST,
   PRODUCT_DETAILS_SUCCESS,
+  PRODUCT_RECOMMEND_FAIL,
+  PRODUCT_RECOMMEND_REQUEST,
+  PRODUCT_RECOMMEND_SUCCESS,
   PRODUCT_LIST_FAIL,
   PRODUCT_LIST_REQUEST,
   PRODUCT_LIST_SUCCESS,
@@ -38,6 +41,27 @@ export const listProduct =
       });
     }
   };
+
+export const recommendProduct =
+  (keyword = " ", pageNumber = " ") =>
+  async (dispatch) => {
+    try {
+      dispatch({ type: PRODUCT_RECOMMEND_REQUEST });
+      const { data } = await axios.get(
+        `${URL}/api/products/recommend/${keyword}`
+      );
+      dispatch({ type: PRODUCT_RECOMMEND_SUCCESS, payload: data });
+    } catch (error) {
+      dispatch({
+        type: PRODUCT_RECOMMEND_FAIL,
+        payload:
+          error.response && error.response.data.message
+            ? error.response.data.message
+            : error.message,
+      });
+    }
+  };
+
 
 
   // PRODUCT LIST FULL when full search
