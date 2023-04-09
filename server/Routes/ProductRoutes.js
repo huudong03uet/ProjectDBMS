@@ -344,9 +344,9 @@ productRoute.get(
             Category_by_gender: recommendation.Category_by_gender,
             price: {
               $lte: recommendation.price * 1.5,
-              $gte: recommendation.price * 0.8,
+              $gte: recommendation.price * 0.9,
             },
-            rating: { $gte: recommendation.rating - 1 },
+            rating: { $gte: -1 },
             Color: recommendation.Color,
           },
         },
